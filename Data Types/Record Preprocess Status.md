@@ -11,7 +11,7 @@
 | `state` | enum as String | Yes | Can be "Preprocessing", "Success" or "Failed"
 | `progress` | float | Yes |
 | `failReason` | String | No |
-| `resultDiffs` | [AssetDiff object](#assetdiff) array | No |
+| `resultDiffs` | [AssetDiff object](#assetdiff) array | No | Will only be populated if state is "Success"
 | `attempts` | int | Yes
 | `ttl` | int | Yes
 

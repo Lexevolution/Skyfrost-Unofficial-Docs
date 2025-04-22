@@ -1,7 +1,7 @@
 # How to upload an object to your inventory
 
 ## Edit Data Tree
-You will need to edit the Data Tree of your object (the `.brson` file), and change every `local:///` uri in that to a `resdb:///` uri. 
+You will need to edit the Data Tree of your object (the `.brson` file), and change every `local:///` (or `packdb:///` if you're editing a resonite package) uri in that to a `resdb:///` uri. 
 
 This requires decoding the `.brson` file and re-encoding after modifications have been made.
 
@@ -17,7 +17,7 @@ Create a [Record object](/Data%20Types/Record.md) (or modify an existing one if 
 - creation and last modification time set to now
 - path set to whatever folder you want to save the object to (starting with `Inventory/`)
 
-You will also populate the [asset manifest](/Data%20Types/Record.md#asset-manifest) with every asset associated with the data tree, the data tree itself, and the thumbnail image. Populate it with the hash and the size in bytes.
+You will also populate the [asset manifest](/Data%20Types/Record.md#asset-manifest) with every asset associated with the data tree, the data tree itself, and the thumbnail image (This can be any Resonite supported image in  any aspect ratio btw). Populate it with the hash and the size in bytes.
 
 ## Start Pre-process
 Send an authenticated POST request to `https://api.resonite.com/users/USERID/records/RECORDID/preprocess`; where:
@@ -39,9 +39,46 @@ This will also return a RecordPreprocessStatus object, but now you need this obj
 
 Send this request every 1 second (this is how quickly Resonite does it) until the `state` in the object is `Success`.
 
-The object in the successful response will also contain a list of Asset Diff objects.
-## Upload Assets
-### If isDirectUpload = true
-### If isDirectUpload = false
+The object in the successful response will also contain a list of [Asset Diff](/Data%20Types/Record%20Preprocess%20Status.md#assetdiff) objects. You will want to upload every asset in this list where the state = 0 and the isUploaded bool = false.
 
+## Upload Assets
+For every asset in the AssetDiff list that you want to upload, send an authenticated POST request to `https://api.resonite.com/users/USERID/assets/RESDBHASH/upload?size=BYTES`; where:
+- `USERID` is your User ID
+- `RESDBHASH` is the hash of the asset you want to upload
+- `BYTES` is the size of the asset in bytes
+
+(Both `RESDBHASH` and `BYTES` can easily be taken from the AssetDiff)
+
+This POST request does not have a body.
+
+This request will return the [Asset Uplaod Data object](/Data%20Types/Asset%20Upload%20Data.md). This contains all the information about how and where to upload the asset. You will need to store this object in a mutable variable, due to needing to return an edited version later on.
+
+If the asset is large enough (>16MB in my experience), the `isDirectUpload` boolean from the Asset Upload Data object will likely be false, the `totalChunks` will be greater than 1, and the `chunkSize` will be smaller than `totalBytes`. This means you will need to split the asset file into `chunkSize` chunks, with the last chunk being the remaining bytes. The total amount of chunks you have split the asset in to should equal `totalChunks`.
+
+The process for uploading a chunked asset (where isDirectUpload = false) and a smaller asset in one go (where isDirectUpload = true) varies enough that they are in separate sections. Keep in mind that for larger uploads, you will likely have a mix of both direct and chunked uploads.
+
+### If isDirectUpload = true
+Send a PUT request to the URL provided in `AssetUploadData.uploadEndpoint` (not authenticated using Resonite's authentication), with these headers:
+- `Upload-Key`: The string from `AssetUploadData.uploadKey`
+- `Upload-Timestamp`: The time string from `AssetUploadData.createdOn`
+
+The body of this request will be the raw asset data. You do not need a `Content-Type` header.
+
+The URL provided is for the specific asset whose hash you provided in the previous request. Do not attempt to upload a different asset using the same URL provided.
+
+You should get an empty 200 OK response back. You are finished uploading the direct asset.
+
+### If isDirectUpload = false
+For each chunk, send a PUT request to the URL provided in `AssetUploadData.uploadEndpoint` (not authenticated using Resonite's authentication), with these headers:
+- `Upload-Key`: The string from `AssetUploadData.uploadKey`
+- `Part-Number`: A number indicating which chunk you are uploading (index starting at 1).
+
+The body of this request is the raw data of the associated chunk of the asset.
+
+You will be re-using the provided URL for each chunk of this asset.
+
+These requests should each return a [Cloudflare Chunk Result object](/Data%20Types/Asset%20Upload%20Data.md#cloudflarechunkresult) that has a lot more data than you actually need in it. You only need to wory about the `ETag` value. You will create an [AssetChunk object](/Data%20Types/Asset%20Upload%20Data.md#assetchunk), set the value of `index` to the zero-indexed chunk you uploaded (so just minus one from `Part-Number`), and set the value of `key` to the value of the `ETag` you received. Add this object to the `chunks` array in your AssetUploadData object for this asset.
+
+## Check for Asset Combination
+## Asset Variance
 ## Upload Record
