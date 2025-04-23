@@ -114,7 +114,7 @@ Resonite's asset store sometimes takes a long time to re-combine any chunked ass
 
 This is where the list of objects I told you to store comes in handy.
 
-This will return back the AssetUploadData for that asset, and you will know when that asset is completely processed and combined in the cloud by the `uploadState` being `Uploaded`.
+This will return back the AssetUploadData for that asset, and you will know when that asset is completely processed and combined in the cloud by the `uploadState` being `Uploaded`. Resonite sends this request every 1.5 seconds for each asset, until `uploadState` = `Uploaded`, so you should probably do that too. In my experience this can take quite a while for larger assets (e.g. ~50MB audio file took ~90 seconds to finish re-combining).
 
 Once all chunked assets' `uploadState` are `Uploaded`, you can move to the next step.
 
