@@ -66,7 +66,17 @@ The body of this request will be the raw asset data. You do not need a `Content-
 
 The URL provided is for the specific asset whose hash you provided in the previous request. Do not attempt to upload a different asset using the same URL provided.
 
-You should get an empty 200 OK response back. You are finished uploading the direct asset.
+You should get an empty 200 OK response back.
+
+Now you need to signify to the cloud that you have finished uploading the asset. Send an authenticated PATCH request to `https://api.resonite.com/users/USERID/assets/RESDBHASH/upload/UPLOADID`; where:
+
+- `USERID` is your User ID
+- `RESDBHASH` is the hash of the asset you want to upload
+- `UPLOADID` is the value of `id` from the AssetUploadData object
+
+The body of the request is the AssetUploadData object as JSON (make sure you set the `Content-Type` header to `application/json`!).
+
+You should get back a "204 No Content" response.
 
 ### If isDirectUpload = false
 For each chunk, send a PUT request to the URL provided in `AssetUploadData.uploadEndpoint` (not authenticated using Resonite's authentication), with these headers:
@@ -79,6 +89,49 @@ You will be re-using the provided URL for each chunk of this asset.
 
 These requests should each return a [Cloudflare Chunk Result object](/Data%20Types/Asset%20Upload%20Data.md#cloudflarechunkresult) that has a lot more data than you actually need in it. You only need to wory about the `ETag` value. You will create an [AssetChunk object](/Data%20Types/Asset%20Upload%20Data.md#assetchunk), set the value of `index` to the zero-indexed chunk you uploaded (so just minus one from `Part-Number`), and set the value of `key` to the value of the `ETag` you received. Add this object to the `chunks` array in your AssetUploadData object for this asset.
 
+After you have uploaded every chunk and added the resulting data to the AssetUploadData object, you need to signify to the cloud that you have finished uploading the asset. Send an authenticated PATCH request to `https://api.resonite.com/users/USERID/assets/RESDBHASH/upload/UPLOADID`; where:
+
+- `USERID` is your User ID
+- `RESDBHASH` is the hash of the asset you want to upload
+- `UPLOADID` is the value of `id` from the AssetUploadData object
+
+The body of the request is the AssetUploadData object as JSON (make sure you set the `Content-Type` header to `application/json`!). This object should have the `chunks` list you made.
+
+You should get back a "204 No Content" response.
+
+You will now also need to save this specific data from this asset upload for later use:
+- The asset hash
+- AssetUploadData.id
+
+I recommend to store these two as it's own object in a list. You will need this from every asset that was a chunked upload.
+
 ## Check for Asset Combination
+Resonite's asset store sometimes takes a long time to re-combine any chunked assets you might have uploaded. So now for every chunked asset you've uploaded, send an authenticated GET request to `https://api.resonite.com/users/USERID/assets/RESDBHASH/upload/UPLOADID`; where:
+
+- `USERID` is your User ID
+- `RESDBHASH` is the hash of the asset you have uploaded
+- `UPLOADID` is the value of `id` from the AssetUploadData object
+
+This is where the list of objects I told you to store comes in handy.
+
+This will return back the AssetUploadData for that asset, and you will know when that asset is completely processed and combined in the cloud by the `uploadState` being `Uploaded`.
+
+Once all chunked assets' `uploadState` are `Uploaded`, you can move to the next step.
+
 ## Asset Variance
+There is some asset variance steps here, however, from my testing, they are not needed, as Resonite's cloud seems to be able to handle asset variance generation on its own. So I  did not research this part.
+
 ## Upload Record
+Now that you've uploaded every asset, you actually need to tell the cloud that your object exists.
+
+Send an authenticated PUT request to `https://api.resonite.com/users/USERID/records/RECORDID?ensureFolder=True`; where:
+- `USERID` is your User ID
+- `RECORDID` is the record ID you have created in the record object
+- `ensureFolder=True` is to make the cloud validate that you actually have a valid folder path in your record object, so you can actually access the object after this request.
+
+The body of this request is the Record object as JSON (make sure you set the `Content-Type` header to `application/json`!).
+
+This should just return a 200 OK and just relay back your Record object, now with `version.globalVersion` set to 1.
+
+----
+You have successfully uploaded an object to your inventory!
