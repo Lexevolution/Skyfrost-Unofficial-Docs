@@ -30,7 +30,7 @@ This will be done the same way as [making an object record](/Tutorials/Uploading
 ## Prepare your audio file
 Resonite uses OGG Vorbis files (.ogg) for voice messages. You can probably send audio messages with any audio format Resonite supports, however, I would stick with .ogg, mainly for space saving reasons.
 
-Hash your audio file using SHA-256, and use the resulting hash as the resdb link for your `assetUri` in the Record object (`resdb:///HASH.ogg`). Also add the hash and size of the audio file as an asset manifest, in the [same way as an object](/Tutorials/Uploading/Upload%20object%20to%20inventory.md#L20). Even though there is only going to be the single audio asset to upload, you still need it as an array with a single asset manifest object.
+Hash your audio file using SHA-256, and use the resulting hash as the resdb link for your `assetUri` in the Record object (`resdb:///HASH.ogg`). Also add the hash and size of the audio file as an asset manifest, in the [same way as an object](/Tutorials/Uploading/Upload%20object%20to%20inventory.md#create-record-object). Even though there is only going to be the single audio asset to upload, you still need it as an array with a single asset manifest object.
 
 ## Asset uploading
 This step is exactly the same as asset uploading for objects, so start with the [record preprocess step](/Tutorials/Uploading/Upload%20object%20to%20inventory.md#start-pre-process), then the [asset uploading step](/Tutorials/Uploading/Upload%20object%20to%20inventory.md#upload-assets), and follow all the way and stop before you do any of the [upload record step](/Tutorials/Uploading/Upload%20object%20to%20inventory.md#upload-record).
