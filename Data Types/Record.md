@@ -48,4 +48,6 @@ Object that contains most of the metadata about a main asset. This is the detail
 ## Currently known Record types
 - `object`
 - `world`
-- `SoundMessage`
+- `audio`
+- `directory` (regular private folder)
+- `link` (public folder)
