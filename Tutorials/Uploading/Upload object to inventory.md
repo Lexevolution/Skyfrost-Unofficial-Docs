@@ -51,7 +51,7 @@ For every asset in the AssetDiff list that you want to upload, send an authentic
 
 This POST request does not have a body.
 
-This request will return the [Asset Uplaod Data object](/Data%20Types/Asset%20Upload%20Data.md). This contains all the information about how and where to upload the asset. You will need to store this object in a mutable variable, due to needing to return an edited version later on.
+This request will return the [Asset Upload Data object](/Data%20Types/Asset%20Upload%20Data.md). This contains all the information about how and where to upload the asset. You will need to store this object in a mutable variable, due to needing to return an edited version later on.
 
 If the asset is large enough (>16MB in my experience), the `isDirectUpload` boolean from the Asset Upload Data object will likely be false, the `totalChunks` will be greater than 1, and the `chunkSize` will be smaller than `totalBytes`. This means you will need to split the asset file into `chunkSize` chunks, with the last chunk being the remaining bytes. The total amount of chunks you have split the asset in to should equal `totalChunks`.
 
