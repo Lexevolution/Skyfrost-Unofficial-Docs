@@ -31,11 +31,12 @@ Note: this is not a standard Authorization Bearer.
 
 # IDs syntax
 
-A bunch of IDs are formatted using a single letter then a dash and something (like `U-userId` or `S-UUIDv4`), known ones are:
+A bunch of IDs are formatted using an identifier then a dash and something (like `U-userId` or `S-UUIDv4`), known ones are:
 - UserID: `U`
 - Session: `S`
 - Record: `R`
 - Group ?: `G`
+- Message: `MSG`
 
 Except User IDs and `G` (groups ?), all ID should be `X-` followed by an UUIDv4.
 
