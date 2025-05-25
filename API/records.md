@@ -1,5 +1,5 @@
 # Get inventory usage
-`GET /users/<userId>/storage
+`GET /users/<userId>/storage`
 
 Needs Authorization: yes
 
