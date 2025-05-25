@@ -188,8 +188,6 @@ Not going to shows only `content` here, so you have the whole message as example
 }
 ```
 
-`content`
-
 # Message type 'Object'
 
 No sample available yet :(
