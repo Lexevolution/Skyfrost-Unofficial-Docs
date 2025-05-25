@@ -67,6 +67,8 @@ Needs Authorization: yes
 
 This will set the content of the `profile` dict.
 
-WARNING: send everything like you got it, if you have an `iconUrl` and only send `tagline` you will erase everything and just put `tagline` !
+> [!WARNING]
+> send everything like you got it, if you have an `iconUrl` and only send `tagline` you will erase everything and just put `tagline` !
 
-NOTE: `tagline` and `description` seems to be unused for now in Resonite
+> [!NOTE]
+> `tagline` and `description` seems to be unused for now in Resonite

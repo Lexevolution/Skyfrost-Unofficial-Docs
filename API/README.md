@@ -1,6 +1,7 @@
 # Resonite API
 
-This is a work in progress, some examples are missing or incomplete, some might be assuming the wrong thing, don't hesistate to fix stuff.
+> [!WARNING]
+> This is a work in progress, some examples are missing or incomplete, some might be assuming the wrong thing, don't hesistate to fix stuff.
 
 # Generalities
 
@@ -27,7 +28,8 @@ The format for the header is:
 - key: "Authorization"
 - value: "res userId:token"
 
-Note: this is not a standard Authorization Bearer.
+> [!NOTE]
+> this is not a standard Authorization Bearer.
 
 # IDs syntax
 
