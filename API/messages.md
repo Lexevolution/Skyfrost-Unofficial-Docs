@@ -5,6 +5,16 @@ All messages types are the same, only the `content` field change, this page will
 Please note that in this page, this is properly JSON formatted, but in real-life, the `content` fields contains JSON serialized as string !
 So you have to parse in JSON the whole API returns, AND the `content` field every time.
 
+Example:
+```json
+{
+  "id": "MSG-UUIDv4",
+  "content": "{\"name\":\"blah blah\"}",
+}
+```
+
+As you see, the `content` does need a second parsing.
+
 # Message type 'Text'
 Not going to shows only `content` here, so you have the whole message as example.
 
