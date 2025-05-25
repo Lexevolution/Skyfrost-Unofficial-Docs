@@ -7,12 +7,12 @@ With filters as body in serialized JSON like:
 
 ```json
 {
-  'requiredTags': ['foo', 'bar', 'baz'],
-  'sortDirection': 'xxx',
-  'sortBy': 'xxx',
-  'count': 10,
-  'offset': 0,
-  'recordType': 'world'
+  "requiredTags": ["foo", "bar", "baz"],
+  "sortDirection": "xxx",
+  "sortBy": "xxx",
+  "count": 10,
+  "offset": 0,
+  "recordType": "world"
 }
 ```
 
